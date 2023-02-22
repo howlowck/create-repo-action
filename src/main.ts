@@ -6,7 +6,7 @@ import { Octokit } from "octokit";
 import _sodium from "libsodium-wrappers";
 import simpleGit, { SimpleGit } from "simple-git";
 
-const orgToken = core.getInput("orgToken");
+const securityToken = core.getInput("securityToken");
 const repoOrg = core.getInput("repoOrg");
 const repoName = core.getInput("repoName");
 const repoDescription = core.getInput("repoDescription");
@@ -19,7 +19,7 @@ const envsToRepoSecrets = envsToRepoSecretsRaw.split(",").map((_) => _.trim());
 const workplace = process.env.GITHUB_WORKSPACE;
 
 const octokit = new Octokit({
-  auth: orgToken,
+  auth: securityToken,
 });
 
 async function main(): Promise<void> {
@@ -55,39 +55,50 @@ async function main(): Promise<void> {
   console.log(`${repoName} created successfully!`);
   core.setOutput("repoUrl", url);
 
-  // Unzip the zip file
-  const unzipped = await decompress(zipPath, `${workplace}/${tmpPath}`);
-  console.log("one of the unzipped file", unzipped[0]);
+  if (!!zipPath) {
+    console.log("Using zip file to initialize repo...");
+    // Unzip the zip file
+    const unzipped = await decompress(zipPath, `${workplace}/${tmpPath}`);
+    console.log("one of the unzipped file", unzipped[0]);
 
-  const git: SimpleGit = simpleGit(`${workplace}/${tmpPath}`, {
-    config: ["user.name=github-actions", "user.email=octocat@github.com"],
-  });
+    const git: SimpleGit = simpleGit(`${workplace}/${tmpPath}`, {
+      config: ["user.name=github-actions", "user.email=octocat@github.com"],
+    });
 
-  console.log("git init");
-  await git.init();
-  console.log("git add");
-  await git.add("./*");
-  console.log("git commit");
-  await git.commit("Initial Commit");
-  console.log("git remote add origin");
-  await git.addRemote(
-    "origin",
-    cloneUrl.replace("https://", `https://${orgToken}@`)
-  );
-  console.log("git branch to main");
-  await git.branch(["-M", "main"]);
-  console.log("git push -u origin main");
-  await git.push(["-u", "origin", "main"]);
-  console.log(`remove temp file: ${workplace}/${tmpPath}`);
-  await rimraf(`${workplace}/${tmpPath}`);
+    console.log("git init");
+    await git.init();
+    console.log("git add");
+    await git.add("./*");
+    console.log("git commit");
+    await git.commit("Initial Commit");
+    console.log("git remote add origin");
+    await git.addRemote(
+      "origin",
+      cloneUrl.replace("https://", `https://${securityToken}@`)
+    );
+    console.log("git branch to main");
+    await git.branch(["-M", "main"]);
+    console.log("git push -u origin main");
+    await git.push(["-u", "origin", "main"]);
+    console.log(`remove temp file: ${workplace}/${tmpPath}`);
+    await rimraf(`${workplace}/${tmpPath}`);
+    console.log("Repo initialized successfully!");
+    console.log("-----------------------------\n");
+  }
+
+  if (envsToRepoSecrets.length === 0) {
+    console.log("No envs to repo secrets. Exiting Task.");
+    return;
+  }
 
   // wait for sodium to be ready
   await _sodium.ready;
   const sodium = _sodium;
+
   const {
     data: { key: publicKey, key_id: publicKeyId },
   } = await octokit.rest.actions.getRepoPublicKey({
-    owner: "howlowck",
+    owner: ownerName,
     repo: repoName,
   });
 
@@ -96,6 +107,9 @@ async function main(): Promise<void> {
     if (!secretValue) {
       throw new Error(`No such env: ${envName}`);
     }
+
+    console.log(`Setting ${envName} to repo secret`);
+
     let binaryKey = sodium.from_base64(
       publicKey,
       sodium.base64_variants.ORIGINAL
@@ -121,6 +135,7 @@ async function main(): Promise<void> {
   });
 
   await Promise.all(secretRequests);
+  console.log("All secrets set successfully!");
 }
 
 main();

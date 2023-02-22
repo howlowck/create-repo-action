@@ -22,8 +22,8 @@ inputs:
       - 'private'
       - 'public'
     default: 'private'
-  orgToken:
-    description: 'Organization token'
+  securityToken:
+    description: 'Security token'
     required: true
   envsToRepoSecrets:
     description: 'Environment variables to secrets'
