@@ -30,6 +30,7 @@
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
     "decompress": "^4.2.1",
+    "libsodium-wrappers": "^0.7.11",
     "nanoid": "^4.0.1",
     "octokit": "^2.0.14",
     "rimraf": "^4.1.2",
@@ -37,6 +38,7 @@
   },
   "devDependencies": {
     "@types/decompress": "^4.2.4",
+    "@types/libsodium-wrappers": "^0.7.10",
     "@types/node": "^18.14.0",
     "@vercel/ncc": "^0.36.1",
     "prettier": "^2.8.4",

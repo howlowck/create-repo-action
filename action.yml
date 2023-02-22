@@ -25,6 +25,10 @@ inputs:
   orgToken:
     description: 'Organization token'
     required: true
+  envsToRepoSecrets:
+    description: 'Environment variables to secrets'
+    required: false
+    default: ''
 outputs:
   repoUrl: # id of output
     description: 'The Repository URL'
