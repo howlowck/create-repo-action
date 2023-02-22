@@ -22,8 +22,6 @@ jobs:
           repoDescription: 'My repo description'
           repoVisibility: 'private'
           orgToken: ${{ secrets.ORG_TOKEN }}
-          envsToRepoSecrets:
-            - ORG_TOKEN
-            - SOME_SECRET
+          envsToRepoSecrets: ORG_TOKEN,SOME_SECRET
       - name: Get the repo URL
         run: echo "The repo URL is ${{ steps.create-repo.outputs.repoUrl }}"
