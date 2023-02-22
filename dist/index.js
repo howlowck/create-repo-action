@@ -83,28 +83,29 @@ function main() {
                 has_wiki: true,
             });
         }
-        const { git_url: gitUrl, url } = repoData.data;
-        console.log("gitUrl", gitUrl);
+        const { clone_url: cloneUrl, html_url: url } = repoData.data;
+        console.log("cloneUrl", cloneUrl);
         console.log(`${repoName} created successfully!`);
         core.setOutput("repoUrl", url);
         // Unzip the zip file
         const unzipped = yield (0, decompress_1.default)(zipPath, `${workplace}/${tmpPath}`);
         console.log("one of the unzipped file", unzipped[0]);
-        const options = {
-            baseDir: `${workplace}/${tmpPath}`,
-            binary: "git",
-            maxConcurrentProcesses: 6,
-            trimmed: false,
-        };
         const git = (0, simple_git_1.default)(`${workplace}/${tmpPath}`, {
             config: ["user.name=github-actions", "user.email=octocat@github.com"],
         });
+        console.log("git init");
         yield git.init();
+        console.log("git add");
         yield git.add("./*");
+        console.log("git commit");
         yield git.commit("Initial Commit");
-        yield git.addRemote("origin", gitUrl);
+        console.log("git remote add origin");
+        yield git.addRemote("origin", cloneUrl.replace("https://", `https://${orgToken}@`));
+        console.log("git branch to main");
         yield git.branch(["-M", "main"]);
+        console.log("git push -u origin main");
         yield git.push(["-u", "origin", "main"]);
+        console.log(`remove temp file: ${workplace}/${tmpPath}`);
         yield (0, rimraf_1.rimraf)(`${workplace}/${tmpPath}`);
     });
 }

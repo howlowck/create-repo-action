@@ -50,13 +50,6 @@ async function main(): Promise<void> {
   const unzipped = await decompress(zipPath, `${workplace}/${tmpPath}`);
   console.log("one of the unzipped file", unzipped[0]);
 
-  const options: Partial<SimpleGitOptions> = {
-    baseDir: `${workplace}/${tmpPath}`,
-    binary: "git",
-    maxConcurrentProcesses: 6,
-    trimmed: false,
-  };
-
   const git: SimpleGit = simpleGit(`${workplace}/${tmpPath}`, {
     config: ["user.name=github-actions", "user.email=octocat@github.com"],
   });
