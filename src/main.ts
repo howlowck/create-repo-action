@@ -41,8 +41,8 @@ async function main(): Promise<void> {
     });
   }
 
-  const { git_url: gitUrl, url } = repoData.data;
-  console.log("gitUrl", gitUrl);
+  const { clone_url: cloneUrl, html_url: url } = repoData.data;
+  console.log("cloneUrl", cloneUrl);
   console.log(`${repoName} created successfully!`);
   core.setOutput("repoUrl", url);
 
@@ -61,12 +61,22 @@ async function main(): Promise<void> {
     config: ["user.name=github-actions", "user.email=octocat@github.com"],
   });
 
+  console.log("git init");
   await git.init();
+  console.log("git add");
   await git.add("./*");
+  console.log("git commit");
   await git.commit("Initial Commit");
-  await git.addRemote("origin", gitUrl);
+  console.log("git remote add origin");
+  await git.addRemote(
+    "origin",
+    cloneUrl.replace("https://", `https://${orgToken}@`)
+  );
+  console.log("git branch to main");
   await git.branch(["-M", "main"]);
+  console.log("git push -u origin main");
   await git.push(["-u", "origin", "main"]);
+  console.log(`remove temp file: ${workplace}/${tmpPath}`);
   await rimraf(`${workplace}/${tmpPath}`);
 }
 
