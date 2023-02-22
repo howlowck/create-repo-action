@@ -17,13 +17,15 @@ const envsToRepoSecretsRaw = core.getInput("envsToRepoSecrets");
 const envsToRepoSecrets = envsToRepoSecretsRaw
   .split(",")
   .map((_) => _.trim())
-  .filter((_) => _);
+  .filter((_) => !!_);
 
 const workplace = process.env.GITHUB_WORKSPACE;
 
 const octokit = new Octokit({
   auth: securityToken,
 });
+
+console.log("\nStarting create-repo-action...");
 
 async function main(): Promise<void> {
   let repoData;
@@ -55,9 +57,8 @@ async function main(): Promise<void> {
     html_url: url,
     owner: { login: ownerName },
   } = repoData.data;
-  console.log("cloneUrl", cloneUrl);
   core.setOutput("repoUrl", url);
-  console.log(`${repoName} created successfully!`);
+  console.log(`✅ ${repoName} created successfully!`);
   console.log("-----------------------------\n");
 
   if (!!zipPath) {
@@ -80,7 +81,12 @@ async function main(): Promise<void> {
     await git.branch(["-M", "main"]);
     await git.push(["-u", "origin", "main"]);
     await rimraf(tmpPath);
-    console.log("Repo initialized successfully!");
+    console.log("✅ Repo content initialized successfully!");
+    console.log("-----------------------------\n");
+  } else {
+    console.log(
+      "🔵 No zip file provided, skipping repo content initialization"
+    );
     console.log("-----------------------------\n");
   }
 
@@ -130,9 +136,17 @@ async function main(): Promise<void> {
     });
 
     await Promise.all(secretRequests);
-    console.log("All secrets set successfully!");
+    console.log("✅ All secrets set successfully!");
+    console.log("-----------------------------\n");
+  } else {
+    console.log("🔵 No secrets to set, skipping...");
     console.log("-----------------------------\n");
   }
+
+  console.log("===========================================");
+  console.log("🚀 Your newly created repo is ready to use");
+  console.log(cloneUrl);
+  console.log("===========================================\n");
 }
 
 main();

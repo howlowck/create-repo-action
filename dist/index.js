@@ -59,11 +59,12 @@ const envsToRepoSecretsRaw = core.getInput("envsToRepoSecrets");
 const envsToRepoSecrets = envsToRepoSecretsRaw
     .split(",")
     .map((_) => _.trim())
-    .filter((_) => _);
+    .filter((_) => !!_);
 const workplace = process.env.GITHUB_WORKSPACE;
 const octokit = new octokit_1.Octokit({
     auth: securityToken,
 });
+console.log("\nStarting create-repo-action...");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         let repoData;
@@ -91,9 +92,8 @@ function main() {
             });
         }
         const { clone_url: cloneUrl, html_url: url, owner: { login: ownerName }, } = repoData.data;
-        console.log("cloneUrl", cloneUrl);
         core.setOutput("repoUrl", url);
-        console.log(`${repoName} created successfully!`);
+        console.log(`✅ ${repoName} created successfully!`);
         console.log("-----------------------------\n");
         if (!!zipPath) {
             const tmpPath = `${workplace}/ex${(0, nanoid_1.nanoid)(10)}tmp`;
@@ -110,7 +110,11 @@ function main() {
             yield git.branch(["-M", "main"]);
             yield git.push(["-u", "origin", "main"]);
             yield (0, rimraf_1.rimraf)(tmpPath);
-            console.log("Repo initialized successfully!");
+            console.log("✅ Repo content initialized successfully!");
+            console.log("-----------------------------\n");
+        }
+        else {
+            console.log("🔵 No zip file provided, skipping repo content initialization");
             console.log("-----------------------------\n");
         }
         if (envsToRepoSecrets.length > 0) {
@@ -143,9 +147,17 @@ function main() {
                 });
             });
             yield Promise.all(secretRequests);
-            console.log("All secrets set successfully!");
+            console.log("✅ All secrets set successfully!");
             console.log("-----------------------------\n");
         }
+        else {
+            console.log("🔵 No secrets to set, skipping...");
+            console.log("-----------------------------\n");
+        }
+        console.log("===========================================");
+        console.log("🚀 Your newly created repo is ready to use");
+        console.log(cloneUrl);
+        console.log("===========================================\n");
     });
 }
 main();
