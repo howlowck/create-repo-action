@@ -49,7 +49,7 @@ const nanoid_1 = __nccwpck_require__(9934);
 const octokit_1 = __nccwpck_require__(7467);
 const libsodium_wrappers_1 = __importDefault(__nccwpck_require__(713));
 const simple_git_1 = __importDefault(__nccwpck_require__(9103));
-const orgToken = core.getInput("orgToken");
+const securityToken = core.getInput("securityToken");
 const repoOrg = core.getInput("repoOrg");
 const repoName = core.getInput("repoName");
 const repoDescription = core.getInput("repoDescription");
@@ -59,7 +59,7 @@ const envsToRepoSecretsRaw = core.getInput("envsToRepoSecrets");
 const envsToRepoSecrets = envsToRepoSecretsRaw.split(",").map((_) => _.trim());
 const workplace = process.env.GITHUB_WORKSPACE;
 const octokit = new octokit_1.Octokit({
-    auth: orgToken,
+    auth: securityToken,
 });
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -90,31 +90,40 @@ function main() {
         console.log("cloneUrl", cloneUrl);
         console.log(`${repoName} created successfully!`);
         core.setOutput("repoUrl", url);
-        // Unzip the zip file
-        const unzipped = yield (0, decompress_1.default)(zipPath, `${workplace}/${tmpPath}`);
-        console.log("one of the unzipped file", unzipped[0]);
-        const git = (0, simple_git_1.default)(`${workplace}/${tmpPath}`, {
-            config: ["user.name=github-actions", "user.email=octocat@github.com"],
-        });
-        console.log("git init");
-        yield git.init();
-        console.log("git add");
-        yield git.add("./*");
-        console.log("git commit");
-        yield git.commit("Initial Commit");
-        console.log("git remote add origin");
-        yield git.addRemote("origin", cloneUrl.replace("https://", `https://${orgToken}@`));
-        console.log("git branch to main");
-        yield git.branch(["-M", "main"]);
-        console.log("git push -u origin main");
-        yield git.push(["-u", "origin", "main"]);
-        console.log(`remove temp file: ${workplace}/${tmpPath}`);
-        yield (0, rimraf_1.rimraf)(`${workplace}/${tmpPath}`);
+        if (!!zipPath) {
+            console.log("Using zip file to initialize repo...");
+            // Unzip the zip file
+            const unzipped = yield (0, decompress_1.default)(zipPath, `${workplace}/${tmpPath}`);
+            console.log("one of the unzipped file", unzipped[0]);
+            const git = (0, simple_git_1.default)(`${workplace}/${tmpPath}`, {
+                config: ["user.name=github-actions", "user.email=octocat@github.com"],
+            });
+            console.log("git init");
+            yield git.init();
+            console.log("git add");
+            yield git.add("./*");
+            console.log("git commit");
+            yield git.commit("Initial Commit");
+            console.log("git remote add origin");
+            yield git.addRemote("origin", cloneUrl.replace("https://", `https://${securityToken}@`));
+            console.log("git branch to main");
+            yield git.branch(["-M", "main"]);
+            console.log("git push -u origin main");
+            yield git.push(["-u", "origin", "main"]);
+            console.log(`remove temp file: ${workplace}/${tmpPath}`);
+            yield (0, rimraf_1.rimraf)(`${workplace}/${tmpPath}`);
+            console.log("Repo initialized successfully!");
+            console.log("-----------------------------\n");
+        }
+        if (envsToRepoSecrets.length === 0) {
+            console.log("No envs to repo secrets. Exiting Task.");
+            return;
+        }
         // wait for sodium to be ready
         yield libsodium_wrappers_1.default.ready;
         const sodium = libsodium_wrappers_1.default;
         const { data: { key: publicKey, key_id: publicKeyId }, } = yield octokit.rest.actions.getRepoPublicKey({
-            owner: "howlowck",
+            owner: ownerName,
             repo: repoName,
         });
         const secretRequests = envsToRepoSecrets.map((envName) => {
@@ -122,6 +131,7 @@ function main() {
             if (!secretValue) {
                 throw new Error(`No such env: ${envName}`);
             }
+            console.log(`Setting ${envName} to repo secret`);
             let binaryKey = sodium.from_base64(publicKey, sodium.base64_variants.ORIGINAL);
             let binarySec = sodium.from_string(secretValue);
             //Encrypt the secret using LibSodium
@@ -137,6 +147,7 @@ function main() {
             });
         });
         yield Promise.all(secretRequests);
+        console.log("All secrets set successfully!");
     });
 }
 main();
