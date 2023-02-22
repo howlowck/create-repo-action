@@ -1,5 +1,8 @@
 name: 'Create GitHub Repo'
 description: 'Greet someone and record the time'
+branding:
+  icon: 'book'
+  color: 'green'
 inputs:
   zipPath:
     description: 'Path to zip file'
