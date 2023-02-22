@@ -57,15 +57,15 @@ const workplace = process.env.GITHUB_WORKSPACE;
 const octokit = new octokit_1.Octokit({
     auth: orgToken,
 });
-console.log("!!! repoOrg", repoOrg);
-console.log("!!! repoName", repoName);
-console.log("!!! repoDescription", repoDescription);
-console.log("!!! isPublic", repoOrg);
-console.log("!!! zipPath", zipPath);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const tmpPath = `ex${(0, nanoid_1.nanoid)(10)}tmp`;
-        const repoData = yield octokit.request("POST /orgs/{org}/repos", {
+        console.log("!!! repoOrg", repoOrg);
+        console.log("!!! repoName", repoName);
+        console.log("!!! repoDescription", repoDescription);
+        console.log("!!! isPublic", isPublic);
+        console.log("!!! zipPath", zipPath);
+        const repoData = yield octokit.request(`POST /orgs/${repoOrg}/repos`, {
             org: repoOrg,
             name: repoName,
             description: repoDescription,

@@ -17,15 +17,15 @@ const octokit = new Octokit({
   auth: orgToken,
 });
 
-console.log("!!! repoOrg", repoOrg);
-console.log("!!! repoName", repoName);
-console.log("!!! repoDescription", repoDescription);
-console.log("!!! isPublic", repoOrg);
-console.log("!!! zipPath", zipPath);
-
 async function main(): Promise<void> {
   const tmpPath = `ex${nanoid(10)}tmp`;
-  const repoData = await octokit.request("POST /orgs/{org}/repos", {
+  console.log("!!! repoOrg", repoOrg);
+  console.log("!!! repoName", repoName);
+  console.log("!!! repoDescription", repoDescription);
+  console.log("!!! isPublic", isPublic);
+  console.log("!!! zipPath", zipPath);
+
+  const repoData = await octokit.request(`POST /orgs/${repoOrg}/repos`, {
     org: repoOrg,
     name: repoName,
     description: repoDescription,
