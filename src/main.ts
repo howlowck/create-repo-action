@@ -19,23 +19,18 @@ const octokit = new Octokit({
 
 async function main(): Promise<void> {
   const tmpPath = `ex${nanoid(10)}tmp`;
-  console.log("!!! repoOrg", repoOrg);
-  console.log("!!! repoName", repoName);
-  console.log("!!! repoDescription", repoDescription);
-  console.log("!!! isPublic", isPublic);
-  console.log("!!! zipPath", zipPath);
 
-  const repoData = await octokit.request(`POST /orgs/${repoOrg}/repos`, {
+  const repoData = await octokit.request("POST /orgs/{org}/repos", {
     org: repoOrg,
     name: repoName,
     description: repoDescription,
-    homepage: "",
     private: !isPublic,
     has_issues: true,
     has_projects: true,
     has_wiki: true,
     headers: {
       "X-GitHub-Api-Version": "2022-11-28",
+      authorization: `token ${orgToken}`,
     },
   });
   const { git_url: gitUrl } = repoData.data;
