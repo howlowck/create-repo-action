@@ -1,5 +1,5 @@
 name: 'Create GitHub Repo'
-description: 'Greet someone and record the time'
+description: 'Create and Initialize a GitHub repository from a zip file, and create repo secrets from environment variables'
 branding:
   icon: 'book'
   color: 'green'

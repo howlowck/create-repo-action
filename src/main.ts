@@ -61,35 +61,6 @@ async function main(): Promise<void> {
   console.log(`✅ ${repoName} created successfully!`);
   console.log("-----------------------------\n");
 
-  if (!!zipPath) {
-    const tmpPath = `${workplace}/ex${nanoid(10)}tmp`;
-    console.log("Using zip file to initialize repo...");
-    // Unzip the zip file
-    await decompress(zipPath, tmpPath);
-
-    const git: SimpleGit = simpleGit(tmpPath, {
-      config: ["user.name=create-repo-action", "user.email=octocat@github.com"],
-    });
-
-    await git.init();
-    await git.add("./*");
-    await git.commit("Initial Commit");
-    await git.addRemote(
-      "origin",
-      cloneUrl.replace("https://", `https://${securityToken}@`)
-    );
-    await git.branch(["-M", "main"]);
-    await git.push(["-u", "origin", "main"]);
-    await rimraf(tmpPath);
-    console.log("✅ Repo content initialized successfully!");
-    console.log("-----------------------------\n");
-  } else {
-    console.log(
-      "🔵 No zip file provided, skipping repo content initialization"
-    );
-    console.log("-----------------------------\n");
-  }
-
   if (envsToRepoSecrets.length > 0) {
     console.log("Setting repo secrets...");
     // wait for sodium to be ready
@@ -140,6 +111,35 @@ async function main(): Promise<void> {
     console.log("-----------------------------\n");
   } else {
     console.log("🔵 No secrets to set, skipping...");
+    console.log("-----------------------------\n");
+  }
+
+  if (!!zipPath) {
+    const tmpPath = `${workplace}/ex${nanoid(10)}tmp`;
+    console.log("Using zip file to initialize repo...");
+    // Unzip the zip file
+    await decompress(zipPath, tmpPath);
+
+    const git: SimpleGit = simpleGit(tmpPath, {
+      config: ["user.name=create-repo-action", "user.email=octocat@github.com"],
+    });
+
+    await git.init();
+    await git.add("./*");
+    await git.commit("Initial Commit");
+    await git.addRemote(
+      "origin",
+      cloneUrl.replace("https://", `https://${securityToken}@`)
+    );
+    await git.branch(["-M", "main"]);
+    await git.push(["-u", "origin", "main"]);
+    await rimraf(tmpPath);
+    console.log("✅ Repo content initialized successfully!");
+    console.log("-----------------------------\n");
+  } else {
+    console.log(
+      "🔵 No zip file provided, skipping repo content initialization"
+    );
     console.log("-----------------------------\n");
   }
 

@@ -95,28 +95,6 @@ function main() {
         core.setOutput("repoUrl", url);
         console.log(`✅ ${repoName} created successfully!`);
         console.log("-----------------------------\n");
-        if (!!zipPath) {
-            const tmpPath = `${workplace}/ex${(0, nanoid_1.nanoid)(10)}tmp`;
-            console.log("Using zip file to initialize repo...");
-            // Unzip the zip file
-            yield (0, decompress_1.default)(zipPath, tmpPath);
-            const git = (0, simple_git_1.default)(tmpPath, {
-                config: ["user.name=create-repo-action", "user.email=octocat@github.com"],
-            });
-            yield git.init();
-            yield git.add("./*");
-            yield git.commit("Initial Commit");
-            yield git.addRemote("origin", cloneUrl.replace("https://", `https://${securityToken}@`));
-            yield git.branch(["-M", "main"]);
-            yield git.push(["-u", "origin", "main"]);
-            yield (0, rimraf_1.rimraf)(tmpPath);
-            console.log("✅ Repo content initialized successfully!");
-            console.log("-----------------------------\n");
-        }
-        else {
-            console.log("🔵 No zip file provided, skipping repo content initialization");
-            console.log("-----------------------------\n");
-        }
         if (envsToRepoSecrets.length > 0) {
             console.log("Setting repo secrets...");
             // wait for sodium to be ready
@@ -152,6 +130,28 @@ function main() {
         }
         else {
             console.log("🔵 No secrets to set, skipping...");
+            console.log("-----------------------------\n");
+        }
+        if (!!zipPath) {
+            const tmpPath = `${workplace}/ex${(0, nanoid_1.nanoid)(10)}tmp`;
+            console.log("Using zip file to initialize repo...");
+            // Unzip the zip file
+            yield (0, decompress_1.default)(zipPath, tmpPath);
+            const git = (0, simple_git_1.default)(tmpPath, {
+                config: ["user.name=create-repo-action", "user.email=octocat@github.com"],
+            });
+            yield git.init();
+            yield git.add("./*");
+            yield git.commit("Initial Commit");
+            yield git.addRemote("origin", cloneUrl.replace("https://", `https://${securityToken}@`));
+            yield git.branch(["-M", "main"]);
+            yield git.push(["-u", "origin", "main"]);
+            yield (0, rimraf_1.rimraf)(tmpPath);
+            console.log("✅ Repo content initialized successfully!");
+            console.log("-----------------------------\n");
+        }
+        else {
+            console.log("🔵 No zip file provided, skipping repo content initialization");
             console.log("-----------------------------\n");
         }
         console.log("===========================================");
