@@ -3,7 +3,7 @@ description: 'Greet someone and record the time'
 inputs:
   zipPath:
     description: 'Path to zip file'
-    required: true
+    required: false
   repoOrg:
     description: 'Organization name of the repo'
     required: false
@@ -17,7 +17,7 @@ inputs:
   repoVisibility:
     type: 'choice'
     description: 'Repository visibility'
-    required: true
+    required: false
     choices:
       - 'private'
       - 'public'
