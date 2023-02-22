@@ -60,19 +60,28 @@ const octokit = new octokit_1.Octokit({
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const tmpPath = `ex${(0, nanoid_1.nanoid)(10)}tmp`;
-        const repoData = yield octokit.request("POST /orgs/{org}/repos", {
-            org: repoOrg,
-            name: repoName,
-            description: repoDescription,
-            private: !isPublic,
-            has_issues: true,
-            has_projects: true,
-            has_wiki: true,
-            headers: {
-                "X-GitHub-Api-Version": "2022-11-28",
-                authorization: `token ${orgToken}`,
-            },
-        });
+        let repoData;
+        if (repoOrg) {
+            repoData = yield octokit.rest.repos.createInOrg({
+                org: repoOrg,
+                name: repoName,
+                description: repoDescription,
+                private: !isPublic,
+                has_issues: true,
+                has_projects: true,
+                has_wiki: true,
+            });
+        }
+        else {
+            repoData = yield octokit.rest.repos.createForAuthenticatedUser({
+                name: repoName,
+                description: repoDescription,
+                private: !isPublic,
+                has_issues: true,
+                has_projects: true,
+                has_wiki: true,
+            });
+        }
         const { git_url: gitUrl } = repoData.data;
         console.log("gitUrl", gitUrl);
         console.log(`${repoName} created successfully!`);

@@ -6,7 +6,7 @@ inputs:
     required: true
   repoOrg:
     description: 'Organization name of the repo'
-    required: true
+    required: false
   repoName:
     description: 'Repository name'
     required: true

@@ -15,7 +15,6 @@ jobs:
         uses: ./
         with:
           zipPath: 'examples/test.zip'
-          repoOrg: 'howlowck'
           repoName: 'test-repo'
           repoDescription: 'My repo description'
           repoVisibility: 'private'
