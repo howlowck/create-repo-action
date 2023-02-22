@@ -6,16 +6,22 @@ import { Octokit, App } from "octokit";
 import simpleGit, { SimpleGit, SimpleGitOptions } from "simple-git";
 
 const orgToken = core.getInput("orgToken");
+const repoOrg = core.getInput("repoOrg");
 const repoName = core.getInput("repoName");
 const repoDescription = core.getInput("repoDescription");
 const isPublic = core.getInput("repoVisibility") === "public";
-const repoOrg = core.getInput("repoOrg");
 const zipPath = core.getInput("zipPath");
 const workplace = process.env.GITHUB_WORKSPACE;
 
 const octokit = new Octokit({
   auth: orgToken,
 });
+
+console.log("!!! repoOrg", repoOrg);
+console.log("!!! repoName", repoName);
+console.log("!!! repoDescription", repoDescription);
+console.log("!!! isPublic", repoOrg);
+console.log("!!! zipPath", zipPath);
 
 async function main(): Promise<void> {
   const tmpPath = `ex${nanoid(10)}tmp`;
