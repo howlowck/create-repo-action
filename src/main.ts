@@ -57,9 +57,9 @@ async function main(): Promise<void> {
     trimmed: false,
   };
 
-  const git: SimpleGit = simpleGit(options)
-    .addConfig("user.name", "github-actions")
-    .addConfig("user.email", "octocat@github.com");
+  const git: SimpleGit = simpleGit(`${workplace}/${tmpPath}`, {
+    config: ["user.name=github-actions", "user.email=octocat@github.com"],
+  });
 
   await git.init();
   await git.add("./*");

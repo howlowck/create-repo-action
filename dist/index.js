@@ -96,9 +96,9 @@ function main() {
             maxConcurrentProcesses: 6,
             trimmed: false,
         };
-        const git = (0, simple_git_1.default)(options)
-            .addConfig("user.name", "github-actions")
-            .addConfig("user.email", "octocat@github.com");
+        const git = (0, simple_git_1.default)(`${workplace}/${tmpPath}`, {
+            config: ["user.name=github-actions", "user.email=octocat@github.com"],
+        });
         yield git.init();
         yield git.add("./*");
         yield git.commit("Initial Commit");
