@@ -50,7 +50,7 @@ steps:
       repoName: 'my-new-app'
       repoDescription: 'My Shiny New Repo'
       repoVisibility: 'public'
-      securityToken: ${{ secrets.ORG_ADMIN_PAT }}
+      securityToken: ${{ secrets.ORG_TOKEN }}
       envsToRepoSecrets: ORG_TOKEN,SOME_SECRET
 
 ```
