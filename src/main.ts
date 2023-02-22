@@ -41,17 +41,17 @@ async function main(): Promise<void> {
     });
   }
 
-  const { git_url: gitUrl } = repoData.data;
+  const { git_url: gitUrl, url } = repoData.data;
   console.log("gitUrl", gitUrl);
   console.log(`${repoName} created successfully!`);
-  core.setOutput("repoUrl", `https://github.com/${repoOrg}/${repoName}`);
+  core.setOutput("repoUrl", url);
 
   // Unzip the zip file
-  const unzipped = await decompress(zipPath, "tmpPath");
+  const unzipped = await decompress(zipPath, tmpPath);
   console.log("one of the unzipped file", unzipped[0]);
 
   const options: Partial<SimpleGitOptions> = {
-    baseDir: `workplace/${tmpPath}`,
+    baseDir: `${workplace}/${tmpPath}`,
     binary: "git",
     maxConcurrentProcesses: 6,
     trimmed: false,
