@@ -48,15 +48,20 @@ const nanoid_1 = __nccwpck_require__(9934);
 const octokit_1 = __nccwpck_require__(7467);
 const simple_git_1 = __importDefault(__nccwpck_require__(9103));
 const orgToken = core.getInput("orgToken");
+const repoOrg = core.getInput("repoOrg");
 const repoName = core.getInput("repoName");
 const repoDescription = core.getInput("repoDescription");
 const isPublic = core.getInput("repoVisibility") === "public";
-const repoOrg = core.getInput("repoOrg");
 const zipPath = core.getInput("zipPath");
 const workplace = process.env.GITHUB_WORKSPACE;
 const octokit = new octokit_1.Octokit({
     auth: orgToken,
 });
+console.log("!!! repoOrg", repoOrg);
+console.log("!!! repoName", repoName);
+console.log("!!! repoDescription", repoDescription);
+console.log("!!! isPublic", repoOrg);
+console.log("!!! zipPath", zipPath);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const tmpPath = `ex${(0, nanoid_1.nanoid)(10)}tmp`;
