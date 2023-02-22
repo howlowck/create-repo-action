@@ -14,7 +14,10 @@ const isPublic = core.getInput("repoVisibility") === "public";
 const zipPath = core.getInput("zipPath");
 const envsToRepoSecretsRaw = core.getInput("envsToRepoSecrets");
 
-const envsToRepoSecrets = envsToRepoSecretsRaw.split(",").map((_) => _.trim());
+const envsToRepoSecrets = envsToRepoSecretsRaw
+  .split(",")
+  .map((_) => _.trim())
+  .filter((_) => _);
 
 const workplace = process.env.GITHUB_WORKSPACE;
 
