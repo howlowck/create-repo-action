@@ -65,6 +65,7 @@ async function main(): Promise<void> {
   await git.add("./*");
   await git.commit("Initial Commit");
   await git.addRemote("origin", gitUrl);
+  await git.branch(["-M", "main"]);
   await git.push(["-u", "origin", "main"]);
   await rimraf(`${workplace}/${tmpPath}`);
 }

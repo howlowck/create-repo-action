@@ -103,6 +103,7 @@ function main() {
         yield git.add("./*");
         yield git.commit("Initial Commit");
         yield git.addRemote("origin", gitUrl);
+        yield git.branch(["-M", "main"]);
         yield git.push(["-u", "origin", "main"]);
         yield (0, rimraf_1.rimraf)(`${workplace}/${tmpPath}`);
     });
