@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import * as github from "@actions/github";
+import { rimraf } from "rimraf";
 import decompress from "decompress";
 import { nanoid } from "nanoid";
 import { Octokit, App } from "octokit";
@@ -47,7 +47,7 @@ async function main(): Promise<void> {
   core.setOutput("repoUrl", url);
 
   // Unzip the zip file
-  const unzipped = await decompress(zipPath, tmpPath);
+  const unzipped = await decompress(zipPath, `${workplace}/${tmpPath}`);
   console.log("one of the unzipped file", unzipped[0]);
 
   const options: Partial<SimpleGitOptions> = {
@@ -66,6 +66,7 @@ async function main(): Promise<void> {
   await git.commit("Initial Commit");
   await git.addRemote("origin", gitUrl);
   await git.push(["-u", "origin", "main"]);
+  await rimraf(`${workplace}/${tmpPath}`);
 }
 
 main();

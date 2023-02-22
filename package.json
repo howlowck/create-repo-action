@@ -32,6 +32,7 @@
     "decompress": "^4.2.1",
     "nanoid": "^4.0.1",
     "octokit": "^2.0.14",
+    "rimraf": "^4.1.2",
     "simple-git": "^3.16.1"
   },
   "devDependencies": {

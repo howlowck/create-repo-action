@@ -1965,6 +1965,9 @@ IN THE SOFTWARE.
 """
 
 
+rimraf
+ISC
+
 safe-buffer
 MIT
 The MIT License (MIT)
