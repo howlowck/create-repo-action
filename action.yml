@@ -1,0 +1,33 @@
+name: 'Create GitHub Repo'
+description: 'Greet someone and record the time'
+inputs:
+  zipPath:
+    description: 'Path to zip file'
+    required: true
+  repoOrg:
+    description: 'Organization name of the repo'
+    required: true
+  repoName:
+    description: 'Repository name'
+    required: true
+  repoDescription:
+    description: 'Repository description'
+    required: false
+    default: ''
+  repoVisibility:
+    type: 'choice'
+    description: 'Repository visibility'
+    required: true
+    choices:
+      - 'private'
+      - 'public'
+    default: 'private'
+  orgToken:
+    description: 'Organization token'
+    required: true
+outputs:
+  repoUrl: # id of output
+    description: 'The Repository URL'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

@@ -1,0 +1,44 @@
+{
+  "name": "create-repo-action",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/main.js",
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write '**/*.ts'",
+    "format-check": "prettier --check '**/*.ts'",
+    "package": "ncc build --source-map --license licenses.txt",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/howlowck/create-repo-action.git"
+  },
+  "keywords": [
+    "actions",
+    "node",
+    "setup",
+    "repo"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/howlowck/create-repo-action/issues"
+  },
+  "homepage": "https://github.com/howlowck/create-repo-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
+    "decompress": "^4.2.1",
+    "nanoid": "^4.0.1",
+    "octokit": "^2.0.14",
+    "simple-git": "^3.16.1"
+  },
+  "devDependencies": {
+    "@types/decompress": "^4.2.4",
+    "@types/node": "^18.14.0",
+    "@vercel/ncc": "^0.36.1",
+    "prettier": "^2.8.4",
+    "typescript": "^4.9.5"
+  }
+}
