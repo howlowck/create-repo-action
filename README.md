@@ -43,7 +43,7 @@ env:
 runs-on: ubuntu-latest
 steps:
   - uses: actions/checkout@v3
-  - uses: howlowck/create-repo@v1.0
+  - uses: howlowck/create-repo-action@v1.0
     with:
       zipPath: './src.zip'
       repoOrg: 'howlowck'
